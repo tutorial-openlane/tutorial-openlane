@@ -1,7 +1,5 @@
 # Tutorial OpenLane
 
-## Instalar herramientas
-
 1. Docker:
 
     ```
@@ -28,15 +26,36 @@
         ```
 
 
-```
-sudo apt-get update
-```
+    ```
+    sudo apt-get update
+    ```
 
-```
- sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
+    ```
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ```
 
-```
-sudo docker run hello-world
-```
+    ```
+    sudo docker run hello-world
+    ```
 
+2.  En la siguiente tabla
+
+    | SkyWater Technologies `sky130A` |
+    |---|
+    | `export PDK=sky130A` |
+    | `export PDKPATH=$PDK_ROOT/$PDK` |
+    | `export STD_CELL_LIBRARY=sky130_fd_sc_hd` |
+
+3. Permisos
+
+    ```
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    sudo reboot # REBOOT!
+    ```
+
+4. Luego
+
+    ```
+    ./start_vnc.sh
+    ```
