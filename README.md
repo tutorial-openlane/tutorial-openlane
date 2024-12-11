@@ -1,5 +1,9 @@
 # Tutorial OpenLane
 
+1. [Contenedor Docker](#instalar-el-contenedor-docker)
+2. [Herrmientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
+3. [Ejectutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
+
 ## Instalar el contenedor Docker:
 
 1. Antes de instalar Docker Engine por primera vez, se necesita configurar el APT (Advanced Package Tool) del repositorio de Docker:
@@ -66,7 +70,7 @@
 
     **Este paso es obligatorio, sin esto todos los scripts de OpenLane fallarán** 
 
-## Herramientas de diseño:
+## Herramientas de diseño e interfaz de trabajo:
 
 1.  Clonar el siguiente [repositorio](https://github.com/iic-jku/IIC-OSIC-TOOLS):
 
