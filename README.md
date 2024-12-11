@@ -75,7 +75,7 @@
 1.  Clonar el siguiente [repositorio](https://github.com/iic-jku/IIC-OSIC-TOOLS):
 
     ```
-    git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git.
+    git clone --depth=1 https://github.com/iic-jku/iic-osic-tools.git
     ```
 
 2.  En la siguiente tabla se enlistan un conjunto de comandos  que se debe ejecutar para configurar el entorno de trabajo de OpenLane con un PDK específico, es este caso **SkyWater Technologies sky130A**:
