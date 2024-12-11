@@ -2,7 +2,7 @@
 
 1. [Contenedor Docker](#instalar-el-contenedor-docker)
 2. [Herrmientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
-3. [Ejectutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
+3. [Ejecutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
 
 ## Instalar el contenedor Docker:
 
