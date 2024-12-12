@@ -171,6 +171,8 @@ Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
         
 Esto creará una carpeta en el directorio del diseño, en este caso ```/headless/spm```, llamada ```runs``` donde se almacenan todos los resultados y archivos generados durante el flujo de diseño.
 
+## ¿Cómo correr un diseño local?
+
 ## Tiger VNC
 
 
