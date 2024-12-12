@@ -174,10 +174,11 @@ Esto creará una carpeta en el directorio del diseño, en este caso ```/headless
 ## Tiger VNC
 
 
-##Referencias
-[1]. https://github.com/iic-jku/iic-osic-tools
-[2]. https://docs.docker.com/engine/install/ubuntu/
-[3]. https://tigervnc.org/
+## Referencias
+
+1. https://github.com/iic-jku/iic-osic-tools
+2. https://docs.docker.com/engine/install/ubuntu/
+3. https://tigervnc.org/
 
 
 
