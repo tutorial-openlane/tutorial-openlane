@@ -3,6 +3,8 @@
 1. [Contenedor Docker](#instalar-el-contenedor-docker)
 2. [Herrmientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
 3. [Ejecutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
+4. [Tiger VNC](#tiger-vnc)
+5. [Referencias](#referencias)
 
 ## Instalar el contenedor Docker:
 
@@ -137,7 +139,7 @@
 
 ## Ejecutar un flujo de diseño:
 
-Accdeda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
+Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
 
 1. En el contenedor, en la ubicación:
 
@@ -145,10 +147,11 @@ Accdeda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
     cd /foss/tools/openlane/2023.08/designs/
     ```
 
-    encontrará dos ejemplos llamados ```spm``` y ```ci```, copie alguna de estas dos carpetas a un directorio en donde se tengan permisos de edición, por ejemplo el directorio ```/headless```.
+    encontrará dos ejemplos llamados ```spm``` y ```ci```, copie alguna de estas dos carpetas a un directorio en donde se tengan permisos de edición, por ejemplo el directorio ```/headless```. Esto se puede realizar por consola o manualmente usando el gestor de archivos que se encuentra en la parte inferior izquierda del servidor VNC.
+   
 
 
-2. Entre a la carpeta copiada de alguno de los ejemplos, en el directorio seleccionado, por ejemplo :
+3. Entre a la carpeta copiada de alguno de los ejemplos, en el directorio seleccionado, por ejemplo :
 
     ```
     cd /headless/spm
@@ -160,13 +163,21 @@ Accdeda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
         
     * ```pin_order.cfg```: Se utiliza para definir la asignación de pines de I/O del diseño.
 
-3. Para correr un flujo de OpenLane es necesario hacer uso del archivo ```flow.tcl``` que se encuentra en la carpeta de Openlane, para lo cual, una vez esté en el directorio donde se encuentra el archivo ```config.json```, deberá ejecutar el flujo de la siguiente forma:
+4. Para correr un flujo de OpenLane es necesario hacer uso del archivo ```flow.tcl``` que se encuentra en la carpeta de Openlane, para lo cual, una vez esté en el directorio donde se encuentra el archivo ```config.json```, deberá ejecutar el flujo de la siguiente forma:
 
 ```
 /foss/tools/openlane/2023.08/flow.tcl
 ```
         
 Esto creará una carpeta en el directorio del diseño, en este caso ```/headless/spm```, llamada ```runs``` donde se almacenan todos los resultados y archivos generados durante el flujo de diseño.
+
+## Tiger VNC
+
+
+##Referencias
+[1]. https://github.com/iic-jku/iic-osic-tools
+[2]. https://docs.docker.com/engine/install/ubuntu/
+[3]. https://tigervnc.org/
 
 
 
