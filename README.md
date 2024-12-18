@@ -130,9 +130,9 @@
     http://localhost/?password=abc123
     ```
 
-    Allí deberá encontar lo siguiente:
+    Allí deberá encontar la siguiente interfaz:
 
-    ![alt text](/img/image-1.png)
+    ![alt text](/img/noVNC.png)
 
     En la parte inferior izquierda podrá encontrar iconos para acceder al gestor de carpetas del contenedor y a la términal.
 
