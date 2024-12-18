@@ -3,8 +3,9 @@
 1. [Contenedor Docker](#instalar-el-contenedor-docker)
 2. [Herrmientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
 3. [Ejecutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
-4. [Tiger VNC](#tiger-vnc)
-5. [Referencias](#referencias)
+4. [¿Cómo interactuar con archivos locales desde el contenedor?](#cómo-interactuar-con-archivos-locales-desde-el-contendor)
+5. [TigerVNC](#tigervnc)
+6. [Referencias](#referencias)
 
 ## Instalar el contenedor Docker:
 
@@ -170,7 +171,7 @@ Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
         
 Esto creará una carpeta en el directorio del diseño, en este caso ```/headless/spm```, llamada ```runs``` donde se almacenan todos los resultados y archivos generados durante el flujo de diseño.
 
-## ¿Cómo correr un diseño local?
+## ¿Cómo interactuar con archivos locales desde el contendor?
 
 1. Pasos para evitar conflictos de puertos:
 
@@ -223,7 +224,7 @@ Esto creará una carpeta en el directorio del diseño, en este caso ```/headless
     6. ```hpretl/iic-osic-tools```: Especifica la imagen de Docker que se usará para crear y ejecutar el contenedor.
 
 
-    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la siguiente sección). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.
+    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la [siguiente sección](#tigervnc)). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.
         
 
         
