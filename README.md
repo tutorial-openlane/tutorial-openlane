@@ -92,7 +92,6 @@
 5. Luego se debe ejecutar el siguiente comando:
 
     1. Entrar a la carpeta del repositorop clonado:
-
         ```
         cd iic-osic-tools
         ```
@@ -121,7 +120,7 @@
 
     Lo anterior hará que:
 
-    * El puerto 80 sea usado para la interfaz web (a través de noVNC).
+    * El puerto ```80``` sea usado para la interfaz web (a través de noVNC).
     
     * El puerto 5901 será usado para el acceso al servidor VNC.
 
@@ -154,7 +153,7 @@ Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
 3. Entre a la carpeta copiada de alguno de los ejemplos, en el directorio seleccionado, por ejemplo :
 
     ```
-    cd /headless/spm
+    cd /headless/spm Usa el siguiente comando para ver los contenedores en ejecución:
     ```
 
     Allí encontrá los *scripts* HDL del ejemplo en la carpeta ```src``` y además encontrará dos *scripts*:
@@ -173,7 +172,110 @@ Esto creará una carpeta en el directorio del diseño, en este caso ```/headless
 
 ## ¿Cómo correr un diseño local?
 
-## Tiger VNC
+1. Pasos para evitar conflictos de puertos:
+
+    1. Revisar los contenedores en ejecución:
+
+        ```
+        docker ps
+        ```
+    2. Detener el contenedor que esté utilizando el puerto conflictivo: Si el contenedor que ya está en ejecución está utilizando el puerto 5901 o 80, se debe detener ese contenedor con el comando:
+
+        ```
+        docker stop <container_id>
+        ```
+
+2. **Montar un volumen (bind mount)**:
+
+    Se puede montar un directorio de la máquina local, es decir, nuestro computador personal, en el contenedor para compartir archivos, usando el siguiente comando:
+    
+    ```
+    docker run -d -v /ruta/host:/ruta/contenedor -p 5901:5901 -p 80:80 hpretl/iic-osic-tools
+    ```
+    en donde:
+
+    1. ```docker run```: Ejecuta un contenedor Docker, es decir, crea e inicia un nuevo contenedor a partir de la imagen que se espcifique más adelante en el comando.
+
+    2. ```-d```: (de detached) indica que el contenedor se debe ejecutar en segundo plano, es decir, el contenedor se ejecutará en el fondo y no ocupará la terminal donde se ejecutó el comando. Esto permite que se pueda seguir usando la terminal mientras el contenedor está corriendo.
+
+    3. ```-v /ruta/host:/ruta/contenedor```:
+    
+        * La opción ```-v``` se utiliza para montar un volumen entre LA máquina local y el contenedor. Esto te permite compartir directorios entre ambos entornos.
+
+        * ```/ruta/host```: es la ruta en la máquina local donde están los archivos que se quieren usar.
+
+        * ```/ruta/contenedor```:  es la ruta dentro del contenedor donde se montará esa carpeta. Para saber cuáles directorios hay en la imagen de Docker ```hpretl/iic-osic-tools``` se puede:
+
+            * Ejecutar el contenedor en modo interactivo:
+
+                ```
+                docker run -it hpretl/iic-osic-tools --skip bash
+                ```
+
+                Este comando permitirá ingresar al contenedor. Por lo general el contenedor ```hpretl/iic-osic-tools``` está configurado para utilizar ```/foss/designs``` como un directorio de trabajo y es el lugar donde normalmente se almacenan y manipulan los archivos de diseño. Este es el directorio predeterminado al que se accede al ejecutar el contenedor con el comando anterior.
+
+            * Una vez dentro del contenedor, se podrá explorar los directorios existentes o crear nuevos directorios según se requiera.
+
+    4. ```-p 5901:5901```: Mapea el puerto ```5901``` del contenedor al puerto ```5901``` en la máquina local, para poder acceder al contenedor usando **VNC**. Esto es específico para el caso en que se desee unar VNC, de lo contrario no es necesario agregar esta parte al comando, ya que hasta el momento, se ha utilizado el contenedor en la forma **NoVNC** accediendo a la interfaz del mismo a través de ```http://localhost/?password=abc123```. Si se desea acceder al contenedor en usando **VNC** se recomienda que revisar esta [sección](#tiger-vnc).
+
+    5. ```-p 80:80```: Mapea el puerto ```80``` del contenedor al puerto ```80``` en la máquina local, para acceder a la interfaz web (como noVNC) como se explicó en la anterior [sección](#herramientas-de-diseño-e-interfaz-de-trabajo).
+
+    6. ```hpretl/iic-osic-tools```: Especifica la imagen de Docker que se usará para crear y ejecutar el contenedor.
+
+
+    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la siguiente sección). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.
+        
+
+        
+
+
+## TigerVNC
+
+### Introducción
+
+VNC y noVNC son tecnologías que permiten acceder a escritorios remotos, pero tienen diferencias clave que pueden hacer que uno sea preferible sobre el otro dependiendo del caso de uso.
+
+#### VNC (Virtual Network Computing)
+
+VNC es una tecnología de escritorio remoto que transmite la salida gráfica de una máquina remota a través de un servidor VNC. Funciona instalando un servidor VNC en la máquina remota y un cliente VNC en la máquina local.
+
+
+#### noVNC (VNC a través de WebSockets)
+
+noVNC es una versión de VNC que permite acceder a un servidor VNC usando un navegador web, lo que elimina la necesidad de instalar software adicional en el dispositivo cliente.
+
+Existen varias razones para preferir uno sobre otro, pero en este caso es preferible usar el cliente VNC nativo, ya que generalmente ofrece una experiencia más fluida y eficiente, como por ejemplo, una de las características en la que VNC generalmente tiene ventajas sobre noVNC es en el manejo de funcionalidades como copiar y pegar entre el escritorio remoto y el dispositivo local.
+
+En este contexto surgen herramientas como TigerVNC, un software cliente y servidor para la tecnología VNC, a continuación se explica cómo configurarlo:
+
+1. En la máquina local (host): Ejecutar los siguientes comandos para instalar el cliente TigerVNC:
+
+    ```
+    sudo apt-get update
+    sudo apt-get install -y tigervnc-viewer
+    ```
+
+2. En el contenedor:  Iniciar un servidor VNC dentro del contenedor
+
+    ```
+    vncserver :1 -geometry 1680x1050 -depth 24
+    ```
+
+    Aunque es probable que después de ejecutar este comando en el contenedor, aparezca un mensaje que indique que ya se está ejecutando ```Xtigervnc server```.
+
+3. En la máquina local (host): Conetarse al contenedor usando VNC ejecutando el siguiente comando:
+
+    ```
+    vncviewer localhost:5901
+    ```
+
+    Cuando se ejecuta este comando, el cliente VNC se conecta al servidor VNC que está corriendo en el display 1 del contenedor. Esto  permitirá ver y controlar el entorno gráfico del contenedor de manera remota a través de una interfaz gráfica de escritorio.
+
+    Si se configura correctamente, se abrirá una ventana del cliente VNC que muestra el escritorio del contenedor, y se podrá interactuar con él como si se estuviera frente a una máquina física, como se muestra en la siguiente imagen:
+
+    ![alt text](/img/vnc1.png)
+
+
 
 
 ## Referencias
