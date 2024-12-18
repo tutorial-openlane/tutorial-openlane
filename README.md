@@ -276,7 +276,112 @@ En este contexto surgen herramientas como TigerVNC, un software cliente y servid
 
     ![alt text](/img/vnc1.png)
 
+## Ejecutar Yosys desde el contenedor
 
+Para ejecutar Yosys, el *software* de síntesis de lógica digital, dentro del contenedor de Docker, se deben seguir estos pasos:
+
+1. Verificar si Yosys está instalado: En la terminal del contenedor ejecutar:
+
+    ```
+    yosys --version
+    ```
+
+2. Crear un *script* con extensión ```.ys``` para automatizar la carga de los respectivos archivos HDL del diseño y su  síntesis. La estrucutra del archivo debe ser la siguiente:
+
+    ```
+    # read design
+    read_verilog -sv src/<archivo_1>.sv
+    read_verilog -sv src/<archivo_2>.sv
+    hierarchy -check -top <nombre_del_modulo_top>
+
+    # the high-level stuff
+    proc; opt; fsm; opt; memory; opt
+
+    # mapping to internal cell library
+    techmap; opt
+
+    # mapping flip-flops to sky130_fd_sc_hd__tt_025C_1v80.lib
+    dfflibmap -liberty /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+    # mapping logic to sky130_fd_sc_hd__tt_025C_1v80.lib
+    abc -liberty /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+    clean
+
+    # write netlist file
+    write_verilog <nombre_del_resultado>.v
+    write_blif <nombre_del_resultado>.blif
+    ```
+
+    En donde:
+
+    * ```read_verilog -sv```: Carga los archivos HDL. El flag ```-sv``` indica que el archivo contiene sintaxis de SystemVerilog. Los archivos pueden tener extensión sv o -svh y el flag seguirá siendo ```-sv```.
+
+    * ```src/<archivo_n>```: Es la ruta de cada uno de las fuentes que componen el diseño. 
+
+    * ```hierarchy -check -top <nombre_del_modulo_top>```: Este paso revisa la jerarquía del diseño y establece el módulo top, que es el punto de entrada al diseño.
+
+    * ```proc; opt; fsm; opt; memory; opt```: Estos comandos realizan varias optimizaciones en el diseño:
+
+        * ```proc```: Procedimiento de optimización de diseño.
+        * ```opt```: Optimización general del diseño.
+        * ```fsm```: Generación de máquinas de estado finitas.
+        * ```memory```: Manejo y optimización de bloques de memoria.
+        * ```opt```: Vuelve a optimizar el diseño después de realizar los pasos anteriores.
+
+        Estas etapas ayudan a reducir el tamaño y la complejidad del diseño, preparando el netlist para su mapeo en celdas físicas.
+
+    * ```techmap; opt```
+
+        ```techmap``` mapea el diseño a una tecnología específica (en este caso, la tecnología de celdas estándar definida en las bibliotecas sky130). Esto incluye la sustitución de las celdas genéricas por celdas específicas de la biblioteca.
+
+        El comando ```opt``` posterior realiza una optimización adicional del diseño, posiblemente reduciendo la cantidad de recursos o mejorando el rendimiento.
+
+    * ```dfflibmap -liberty /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib```: Este comando mapea las celdas flip-flop del diseño a las celdas de la biblioteca ```sky130_fd_sc_hd``` usando un archivo de biblioteca de celdas ```sky130_fd_sc_hd__tt_025C_1v80.lib```. Estas celdas son específicas para la tecnología  sky130.
+
+        Principales opciones que se podrán encontrar dentro del repositorio de SkyWater PDK:
+
+        * ```sky130_fd_sc_hd```: Librería de celdas estándar de alto rendimiento (High Density Standard Cells). Es la más comúnmente utilizada en diseños generales de Sky130 para procesadores, memoria, y otros circuitos digitales.
+
+        * ```sky130_fd_sc_hs```: Esta es una versión más optimizada de la librería HD pero para altas velocidades. Proporciona celdas diseñadas para maximizar la velocidad, sacrificando un poco de área.
+
+        * ```sky130_fd_sc_lp```: Librería optimizada para diseños que necesitan bajo consumo de energía LP (Low Power). Utiliza celdas de bajo consumo que son ideales para aplicaciones portátiles o de consumo energético mínimo.
+
+        * ```sky130_fd_sc_ms```: Librería optimizada para memorias y es adecuada para diseños que requieren alta densidad de celdas y gran capacidad de almacenamiento.
+
+        En este caso se escogió ```sky130_fd_sc_hd``` y existen diferentes versiones de la librería **Liberty** que corresponden a distintas configuraciones de la tecnología, como diferentes condiciones de proceso, voltaje, temperatura, etc. Los archivos ```.lib``` son versiones específicas de la librería que se usan para sintetizar el diseño teniendo en cuenta un conjunto particular de parámetros de operación. En este caso particular se escogió ``sky130_fd_sc_hd__tt_025C_1v80.lib```, en donde los sufijos en los nombres de los archivos de la librería representan lo siguiente:
+
+        * ```tt```: Tipo de proceso "typical" (condiciones nominales).
+        * ```025C```: Temperatura de 25°C.
+        * ```1v80```: Voltaje de 1.80V.
+
+        Además de esta versión tt_025C_1v80.lib, pueden existir otras versiones como:
+
+        * ```sky130_fd_sc_hd__ss_025C_1v80.lib```: Para un proceso ss (de baja velocidad).
+        * ```sky130_fd_sc_hd__ff_025C_1v80.lib```: Para un proceso ff (de alta frecuencia).
+        * ```sky130_fd_sc_hd__tt_125C_1v80.lib```: Para una temperatura de operación de 125°C.
+
+    * ```abc -liberty /foss/pdks/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib```: El comando abc realiza el mapeo de la lógica combinacional del diseño a las celdas de la biblioteca de sky130. Aquí es donde se realiza el mapeo de la lógica del diseño a las celdas físicas de la biblioteca, convirtiendo las operaciones lógicas en celdas de compuertas.
+
+    * Creación del Netlist: Se genera un archivo que contiene el diseño después de la síntesis, optimización y mapeo a celdas. Se pueden generar diferentes tipos de netlists:
+
+        * ```write_verilog <nombre_del_resultado>.v```: Genera un archivo de Verilog. 
+
+        * ```write_verilog <nombre_del_resultado>.v```: Genera  un archivo BLIF (Berkeley Logic Interchange Format).
+
+
+3. Correr el *script* ```.ys```: En la terminal se debe estar ubicado en el directorio que contiene a la carpeta en donde están las fuentes HDL, en este caso la carpeta es ```src```, por lo que en la terminal donde se ejecturá el *script* se debe estar ubicado en el directorio que contiene a la carpeta ```src``` y se debe ejecutar el *script* usando el siguiente comando:
+
+    ```
+    yosys -s script.ys
+    ```
+
+    En donde:
+
+    * ```yosys```: Es el comando para ejecutar Yosys.
+    * ```-s script.ys```: Indica que Yosys debe cargar y ejecutar las instrucciones que están en el *script* ```.ys```.
+
+    Esto generará un nuevo archivo ```.v``` y ```.blif``` como se ordenó en el *script*.
 
 
 ## Referencias
