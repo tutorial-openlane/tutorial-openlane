@@ -5,7 +5,8 @@
 3. [Ejecutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
 4. [¿Cómo interactuar con archivos locales desde el contenedor?](#cómo-interactuar-con-archivos-locales-desde-el-contendor)
 5. [TigerVNC](#tigervnc)
-6. [Referencias](#referencias)
+6. [Ejecutar Yosys](#ejecutar-yosys-desde-el-contenedor)
+7. [Referencias](#referencias)
 
 ## Instalar el contenedor Docker:
 
@@ -224,10 +225,7 @@ Esto creará una carpeta en el directorio del diseño, en este caso ```/headless
     6. ```hpretl/iic-osic-tools```: Especifica la imagen de Docker que se usará para crear y ejecutar el contenedor.
 
 
-    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la [siguiente sección](#tigervnc)). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.
-        
-
-        
+    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la [siguiente sección](#tigervnc)). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.        
 
 
 ## TigerVNC
