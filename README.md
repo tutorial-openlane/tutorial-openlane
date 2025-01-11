@@ -1,8 +1,8 @@
 # Tutorial OpenLane
 
 1. [Contenedor Docker](#instalar-el-contenedor-docker)
-2. [Herrmientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
-3. [Ejecutar un flujo de diseño](#ejecutar-un-flujo-de-diseño)
+2. [Herramientas e interfaz de trabajo](#herramientas-de-diseño-e-interfaz-de-trabajo)
+3. [Ejecutar un flujo de diseño](#ejecutar-el-flujo-de-diseño-con-openlane)
 4. [¿Cómo interactuar con archivos locales desde el contenedor?](#cómo-interactuar-con-archivos-locales-desde-el-contendor)
 5. [TigerVNC](#tigervnc)
 6. [Ejecutar Yosys](#ejecutar-yosys-desde-el-contenedor)
@@ -138,7 +138,20 @@
 
     En la parte inferior izquierda podrá encontrar iconos para acceder al gestor de carpetas del contenedor y a la términal.
 
-## Ejecutar un flujo de diseño:
+
+## Ejecutar el flujo de diseño con Openlane: 
+
+Para comprobar la instalacion de Openlane, correr el flujo de diseño con el ejemplo spm: 
+
+```
+python3 -m openlane --run-example spm
+```
+
+Esto creará una carpeta en la carpeta designs del contenedor, y en la carpeta eda/designs que se encuentra en el home de la máquinal local. Dentro de la carpeta designs/spm, se creará la carpeta llamada ```runs``` donde se almacenan todos los resultados y archivos generados durante el flujo de diseño.
+
+   
+
+<!---## Ejecutar un flujo de diseño:
 
 Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
 
@@ -155,7 +168,7 @@ Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
 3. Entre a la carpeta copiada de alguno de los ejemplos, en el directorio seleccionado, por ejemplo :
 
     ```
-    cd /headless/spm Usa el siguiente comando para ver los contenedores en ejecución:
+    cd /headless/spm 
     ```
 
     Allí encontrá los *scripts* HDL del ejemplo en la carpeta ```src``` y además encontrará dos *scripts*:
@@ -171,61 +184,77 @@ Acceda a la terminal que se ve en la interfaz y ejecute los siguientes pasos:
 ```
         
 Esto creará una carpeta en el directorio del diseño, en este caso ```/headless/spm```, llamada ```runs``` donde se almacenan todos los resultados y archivos generados durante el flujo de diseño.
+-->
+
+
+
+
+
+
 
 ## ¿Cómo interactuar con archivos locales desde el contendor?
 
-1. Pasos para evitar conflictos de puertos:
+1. ### Montar un Volumen
 
-    1. Revisar los contenedores en ejecución:
-
-        ```
-        docker ps
-        ```
-    2. Detener el contenedor que esté utilizando el puerto conflictivo: Si el contenedor que ya está en ejecución está utilizando el puerto 5901 o 80, se debe detener ese contenedor con el comando:
-
-        ```
-        docker stop <container_id>
-        ```
-
-2. **Montar un volumen (bind mount)**:
-
-    Se puede montar un directorio de la máquina local, es decir, nuestro computador personal, en el contenedor para compartir archivos, usando el siguiente comando:
+    1. Pasos para evitar conflictos de puertos:
     
-    ```
-    docker run -d -v /ruta/host:/ruta/contenedor -p 5901:5901 -p 80:80 hpretl/iic-osic-tools
-    ```
-    en donde:
-
-    1. ```docker run```: Ejecuta un contenedor Docker, es decir, crea e inicia un nuevo contenedor a partir de la imagen que se espcifique más adelante en el comando.
-
-    2. ```-d```: (de detached) indica que el contenedor se debe ejecutar en segundo plano, es decir, el contenedor se ejecutará en el fondo y no ocupará la terminal donde se ejecutó el comando. Esto permite que se pueda seguir usando la terminal mientras el contenedor está corriendo.
-
-    3. ```-v /ruta/host:/ruta/contenedor```:
+        1. Revisar los contenedores en ejecución:
     
-        * La opción ```-v``` se utiliza para montar un volumen entre LA máquina local y el contenedor. Esto te permite compartir directorios entre ambos entornos.
+            ```
+            docker ps
+            ```
+        2. Detener el contenedor que esté utilizando el puerto conflictivo: Si el contenedor que ya está en ejecución está utilizando el puerto 5901 o 80, se debe detener ese contenedor    con el comando:
+    
+            ```
+            docker stop <container_id>
+            ```
+    
+    2. **Montar un volumen (bind mount)**:
+    
+        Se puede montar un directorio de la máquina local, es decir, nuestro computador personal, en el contenedor para compartir archivos, usando el siguiente comando:
+        
+        ```
+        docker run -d -v /ruta/host:/ruta/contenedor -p 5901:5901 -p 80:80 hpretl/iic-osic-tools
+        ```
+        en donde:
+    
+        1. ```docker run```: Ejecuta un contenedor Docker, es decir, crea e inicia un nuevo contenedor a partir de la imagen que se espcifique más adelante en el comando.
+    
+        2. ```-d```: (de detached) indica que el contenedor se debe ejecutar en segundo plano, es decir, el contenedor se ejecutará en el fondo y no ocupará la terminal donde se ejecutó el comando. Esto permite que se pueda seguir usando la terminal mientras el contenedor está corriendo.
+    
+        3. ```-v /ruta/host:/ruta/contenedor```:
+        
+            * La opción ```-v``` se utiliza para montar un volumen entre LA máquina local y el contenedor. Esto te permite compartir directorios entre ambos entornos.
+    
+            * ```/ruta/host```: es la ruta en la máquina local donde están los archivos que se quieren usar.
+    
+            * ```/ruta/contenedor```:  es la ruta dentro del contenedor donde se montará esa carpeta. Para saber cuáles directorios hay en la imagen de Docker ```hpretl/iic-osic-tools``` se puede:
+    
+                * Ejecutar el contenedor en modo interactivo:
+    
+                    ```
+                    docker run -it hpretl/iic-osic-tools --skip bash
+                    ```
+    
+                    Este comando permitirá ingresar al contenedor. Por lo general el contenedor ```hpretl/iic-osic-tools``` está configurado para utilizar ```/foss/designs``` como un directorio de trabajo y es el lugar donde normalmente se almacenan y manipulan los archivos de diseño. Este es el directorio predeterminado al que se accede al ejecutar el contenedor con el comando anterior.
+    
+                * Una vez dentro del contenedor, se podrá explorar los directorios existentes o crear nuevos directorios según se requiera.
+    
+        4. ```-p 5901:5901```: Mapea el puerto ```5901``` del contenedor al puerto ```5901``` en la máquina local, para poder acceder al contenedor usando **VNC**. Esto es específico para el caso en que se desee unar VNC, de lo contrario no es necesario agregar esta parte al comando, ya que hasta el momento, se ha utilizado el contenedor en la forma **NoVNC** accediendo a la interfaz del mismo a través de ```http://localhost/?password=abc123```. Si se desea acceder al contenedor en usando **VNC** se recomienda que revisar esta [sección](#tiger-vnc).
+    
+        5. ```-p 80:80```: Mapea el puerto ```80``` del contenedor al puerto ```80``` en la máquina local, para acceder a la interfaz web (como noVNC) como se explicó en la anterior [sección](#herramientas-de-diseño-e-interfaz-de-trabajo).
+    
+        6. ```hpretl/iic-osic-tools```: Especifica la imagen de Docker que se usará para crear y ejecutar el contenedor.
+    
+    
+        Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la [siguiente sección](#tigervnc)). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.        
 
-        * ```/ruta/host```: es la ruta en la máquina local donde están los archivos que se quieren usar.
 
-        * ```/ruta/contenedor```:  es la ruta dentro del contenedor donde se montará esa carpeta. Para saber cuáles directorios hay en la imagen de Docker ```hpretl/iic-osic-tools``` se puede:
+2. ### Utilizar carpeta local:
 
-            * Ejecutar el contenedor en modo interactivo:
-
-                ```
-                docker run -it hpretl/iic-osic-tools --skip bash
-                ```
-
-                Este comando permitirá ingresar al contenedor. Por lo general el contenedor ```hpretl/iic-osic-tools``` está configurado para utilizar ```/foss/designs``` como un directorio de trabajo y es el lugar donde normalmente se almacenan y manipulan los archivos de diseño. Este es el directorio predeterminado al que se accede al ejecutar el contenedor con el comando anterior.
-
-            * Una vez dentro del contenedor, se podrá explorar los directorios existentes o crear nuevos directorios según se requiera.
-
-    4. ```-p 5901:5901```: Mapea el puerto ```5901``` del contenedor al puerto ```5901``` en la máquina local, para poder acceder al contenedor usando **VNC**. Esto es específico para el caso en que se desee unar VNC, de lo contrario no es necesario agregar esta parte al comando, ya que hasta el momento, se ha utilizado el contenedor en la forma **NoVNC** accediendo a la interfaz del mismo a través de ```http://localhost/?password=abc123```. Si se desea acceder al contenedor en usando **VNC** se recomienda que revisar esta [sección](#tiger-vnc).
-
-    5. ```-p 80:80```: Mapea el puerto ```80``` del contenedor al puerto ```80``` en la máquina local, para acceder a la interfaz web (como noVNC) como se explicó en la anterior [sección](#herramientas-de-diseño-e-interfaz-de-trabajo).
-
-    6. ```hpretl/iic-osic-tools```: Especifica la imagen de Docker que se usará para crear y ejecutar el contenedor.
+    La carpeta eda se crea automáticamente como parte de la instalación de una herramienta o entorno relacionado con diseño EDA, como es el caso de OpenLane. Entonces la carpeta designs del contenedor se encuentra enlazada a la carpeta eda/designs que esta en el home de la máquina local. Por lo tanto en esta carpeta se pueden guardar los proyectos que se quieran con el contenedor para usar las herramientas de diseño.  
 
 
-    Una vez ejecutado este comando, se podrá interactuar con los archivos de la carpeta especificada (```/ruta/host```) tanto desde la interfaz NoVNC como desde la interfaz VNC (cuya configuración se detallará en la [siguiente sección](#tigervnc)). Los cambios realizados en los archivos, ya sea de manera local o dentro del contenedor, se reflejarán automáticamente en ambas ubicaciones.        
 
 
 ## TigerVNC
@@ -269,10 +298,13 @@ En este contexto surgen herramientas como TigerVNC, un software cliente y servid
     ```
 
     Cuando se ejecuta este comando, el cliente VNC se conecta al servidor VNC que está corriendo en el display 1 del contenedor. Esto  permitirá ver y controlar el entorno gráfico del contenedor de manera remota a través de una interfaz gráfica de escritorio.
+   Antes de ingresar al contenedor se abrira una ventana emergente donde se debe colocar la siguiente contraseña: ```abc123``` 
+   
 
     Si se configura correctamente, se abrirá una ventana del cliente VNC que muestra el escritorio del contenedor, y se podrá interactuar con él como si se estuviera frente a una máquina física, como se muestra en la siguiente imagen:
 
     ![alt text](/img/vnc1.png)
+
 
 ## Ejecutar Yosys desde el contenedor
 
@@ -380,6 +412,15 @@ Para ejecutar Yosys, el *software* de síntesis de lógica digital, dentro del c
     * ```-s script.ys```: Indica que Yosys debe cargar y ejecutar las instrucciones que están en el *script* ```.ys```.
 
     Esto generará un nuevo archivo ```.v``` y ```.blif``` como se ordenó en el *script*.
+
+    Estos archivos contienen  una versión "plana" del diseño, donde los módulos originales se reemplazan por instancias de puertas lógicas básicas.
+
+    Contiene:
+
+   + Instancias de standard cells: Puertas lógicas, flip-flops, etc.
+   + Estructura optimizada del circuito.
+
+    ![alt text](/img/yosys_verilog.png)
 
 
 ## Referencias
